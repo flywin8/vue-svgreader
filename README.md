@@ -1,5 +1,7 @@
 # vue-svgreader
 
+[![NPM version](https://img.shields.io/npm/v/vue-svgreader.svg?style=flat)](https://www.npmjs.com/package/vue-svgreader) [![NPM downloads](https://img.shields.io/npm/dm/vue-svgreader.svg)](https://www.npmjs.com/package/vue-svgreader) [![MIT](https://img.shields.io/npm/l/vue-svgreader.svg)](https://www.npmjs.com/package/vue-svgreader) [![Git Size](https://img.shields.io/github/languages/code-size/flywin8/vue-svgreader.svg?maxAge=2592000)](https://github.com/flywin8/vue-svgreader) 
+
 > 这是一个基于VUE的SVG文件阅读器插件，实现自定义水印、自定义尺寸、放大、缩小、滚动、翻页、全屏等功能
 
 ##有问题反馈
@@ -16,6 +18,7 @@
 ```javascript
 npm install vue-svgreader
 ```
+[![vue-svgreader](https://nodei.co/npm/vue-svgreader.png)](https://www.npmjs.com/package/vue-svgreader)
 
 ### 在组件中使用
 ```javascript
