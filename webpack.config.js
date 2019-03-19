@@ -2,13 +2,13 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
-  // entry: './src/main.js',
-  entry: './src/lib/index.js',
+  entry: './src/main.js', // npm run dev
+  // entry: './src/lib/index.js', // 发布到 npm
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    // filename: 'build.js',
-    filename: 'svgreader.js',
+    filename: 'build.js', // npm run dev
+    // filename: 'svgreader.js', // 发布到 npm
     library: 'SvgReader',
     libraryTarget: 'umd',
     umdNamedDefine: true

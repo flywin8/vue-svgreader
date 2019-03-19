@@ -32,7 +32,7 @@
     <div class="body" :style="bodyStyle">
       <ul class="svgImage">
         <li v-for="(item,index) of viewerFiles" :key="index">
-          <embed :src="item" type="image/svg+xml">
+          <img :src="item" type="image/svg+xml" />
         </li>
         <li>
           <button v-if="showLoadMore" class="btn loadmore" @click="onLoadMore()">
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import iconfont from '../../static/iconfont.js'
+import iconfont from './iconfont.js'
 import gwm from 'gwm'
 export default {
   name: 'SvgReader',
@@ -60,8 +60,9 @@ export default {
           txt: '水印文字',
           width: '860px',
           height: '700px',
-          defaultLoadPage: 3,
-          nextloadPage: 3,
+          defaultZoom: false, // 默认是否可以缩小
+          defaultLoadPage: 3, // 默认加载页数
+          nextloadPage: 3, // 继续浏览加载页数
           files: []
         }
       }
@@ -73,7 +74,7 @@ export default {
       height: '700px',
       currentPage: 1,
       LoadPage: 3,
-      zoom: 100,
+      zoom: 1,
       isFullscreen: false,
       disableMax: false,
       disableMin: false
@@ -83,6 +84,7 @@ export default {
     this.width = this.watermark.width
     this.height = this.watermark.height
     this.LoadPage = this.watermark.defaultLoadPage
+    this.disableMin = !this.watermark.defaultZoom
   },
   mounted () {
     const txt = this.watermark.txt
@@ -129,6 +131,7 @@ export default {
         txt: this.viewers.txt || '水印文字',
         width: this.viewers.width || '860px',
         height: this.viewers.height || '700px',
+        defaultZoom: this.viewers.defaultZoom,
         defaultLoadPage: this.viewers.defaultLoadPage || 3,
         nextloadPage: this.viewers.nextloadPage || 3,
         files: this.viewers.files || []
@@ -141,16 +144,19 @@ export default {
   methods: {
     onZoom (isBig) {
       if (isBig) {
-        this.zoom = 120
+        this.zoom += 0.2
       } else {
-        this.zoom = 80
+        this.zoom -= 0.2
       }
-      let width = parseInt(this.width) * this.zoom / 100
+      let width = parseInt(this.watermark.width) * this.zoom
       let clientWidth = document.body.clientWidth - 140
       width = width > clientWidth ? clientWidth : (width < 500 ? 500 : width)
       this.width = width + 'px'
       this.disableMax = width === clientWidth
       this.disableMin = width === 500
+      if(!this.watermark.defaultZoom){
+        this.disableMin = this.width === this.watermark.width
+      }
     },
     onFullScreen (isFull) {
       this.isFullscreen = isFull
@@ -232,7 +238,7 @@ li {
   overflow-y: auto;
   overflow-x: hidden;
 }
-embed {
+.svgImage img {
   width: 100%;
   border: 1px solid #cccccc;
   border-width: 1px 0px;
