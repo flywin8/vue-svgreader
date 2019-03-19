@@ -33,7 +33,7 @@ export default {
         txt: '水印文字',
         width: '700px', // 阅读器宽度默认860px
         height: '500px', // 阅读器高度默认700px
-        defaultZoom: false, // 默认是否可以缩小
+        defaultZoom: false, // 默认不可以缩小
         defaultLoadPage: 3, // 默认加载中页数是3
         nextloadPage: 3, // 每次点击继续浏览加载页数是3
         files: [

@@ -60,7 +60,7 @@ export default {
           txt: '水印文字',
           width: '860px',
           height: '700px',
-          defaultZoom: false, // 默认是否可以缩小
+          defaultZoom: false, // 默认不可以缩小
           defaultLoadPage: 3, // 默认加载页数
           nextloadPage: 3, // 继续浏览加载页数
           files: []
@@ -77,7 +77,7 @@ export default {
       zoom: 1,
       isFullscreen: false,
       disableMax: false,
-      disableMin: false
+      disableMin: true
     }
   },
   created () {
@@ -189,13 +189,6 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-ul,
-li {
-  padding: 0;
-  margin: 0;
-  list-style-type: none;
-  text-align: center;
-}
 .SvgReader {
   border: 1px solid #cccccc;
   margin: 0 auto;
@@ -237,6 +230,14 @@ li {
   border-top: 1px solid #cccccc;
   overflow-y: auto;
   overflow-x: hidden;
+}
+.svgImage,
+.svgImage li {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  text-align: center;
+  display: block;
 }
 .svgImage img {
   width: 100%;

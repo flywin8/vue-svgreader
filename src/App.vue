@@ -11,7 +11,7 @@ export default {
     return {
       viewers: {
         txt: '杨万里yangwangli', // 水印文字
-        defaultZoom: true,
+        // defaultZoom: true,
         // width: '700px',
         // height: '500px',
         files: [
