@@ -1,7 +1,7 @@
 {
   "name": "vue-svgreader",
   "description": "这是一个基于VUE的SVG文件阅读器插件，实现自定义水印、自定义尺寸、放大、缩小、滚动、翻页、全屏等功能",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "author": "十二生肖 <flywin@vip.qq.com>",
   "license": "MIT",
   "private": false,

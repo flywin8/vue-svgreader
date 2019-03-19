@@ -32,7 +32,7 @@
     <div class="body" :style="bodyStyle">
       <ul class="svgImage">
         <li v-for="(item,index) of viewerFiles" :key="index">
-          <img :src="item" type="image/svg+xml" />
+          <img :src="item" type="image/svg+xml">
         </li>
         <li>
           <button v-if="showLoadMore" class="btn loadmore" @click="onLoadMore()">
@@ -150,18 +150,19 @@ export default {
       }
       let width = parseInt(this.watermark.width) * this.zoom
       let clientWidth = document.body.clientWidth - 140
-      width = width > clientWidth ? clientWidth : (width < 500 ? 500 : width)
+      width = width > clientWidth ? clientWidth : (width < 600 ? 600 : width)
       this.width = width + 'px'
       this.disableMax = width === clientWidth
-      this.disableMin = width === 500
-      if(!this.watermark.defaultZoom){
+      this.disableMin = width === 600
+      if (!this.watermark.defaultZoom) {
         this.disableMin = this.width === this.watermark.width
       }
     },
     onFullScreen (isFull) {
       this.isFullscreen = isFull
       this.disableMax = isFull
-      this.disableMin = isFull
+      this.disableMin = !this.watermark.defaultZoom || isFull
+      this.zoom = 1
       this.onDocumentResize()
     },
     onbodyScroll (event) {
