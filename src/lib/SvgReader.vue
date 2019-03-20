@@ -1,5 +1,5 @@
 <template>
-  <div :class="SvgReaderClass" :style="viewerStyle">
+  <div :class="SvgReaderClass" :style="viewerStyle" ref="SvgReader">
     <div class="header">
       <button v-if="isFullscreen" class="btn" @click="onFullScreen(false)" title="恢复窗口">
         <svg class="icon" aria-hidden="true">
@@ -77,14 +77,19 @@ export default {
       zoom: 1,
       isFullscreen: false,
       disableMax: false,
-      disableMin: true
+      disableMin: true,
+      w_unit: '',
+      h_unit: ''
     }
   },
   created () {
-    this.width = this.watermark.width
-    this.height = this.watermark.height
+    this.w_unit = this.watermark.width.match(/(px|%)$/ig)[0] || 'px'
+    this.h_unit = this.watermark.height.match(/(px|%)$/ig)[0] || 'px'
+    this.width = parseInt(this.watermark.width)
+    this.height = parseInt(this.watermark.height)
     this.LoadPage = this.watermark.defaultLoadPage
     this.disableMin = !this.watermark.defaultZoom
+    console.log(this.disableMin)
   },
   mounted () {
     const txt = this.watermark.txt
@@ -111,11 +116,15 @@ export default {
       return this.currentPage + ' / ' + this.watermark.files.length
     },
     viewerStyle () {
-      return 'width:' + this.width
+      if (this.w_unit === '%' && this.width === 100) {
+        return ''
+      }
+      return 'width:' + this.width + this.w_unit
     },
     bodyStyle () {
-      const bodyHeight = (parseInt(this.height) - 50) + 'px'
-      return 'height:' + bodyHeight
+      let clientHeight = document.documentElement.clientHeight
+      let mainHeight = this.h_unit === '%' ? Math.round(this.height / 100 * clientHeight) : parseInt(this.height)
+      return 'height:' + (mainHeight - 50) + 'px'
     },
     maxStyle () {
       return this.disableMax ? 'color:#E2E2E2;' : ''
@@ -148,14 +157,19 @@ export default {
       } else {
         this.zoom -= 0.2
       }
-      let width = parseInt(this.watermark.width) * this.zoom
-      let clientWidth = document.body.clientWidth - 140
-      width = width > clientWidth ? clientWidth : (width < 600 ? 600 : width)
-      this.width = width + 'px'
-      this.disableMax = width === clientWidth
-      this.disableMin = width === 600
+      let width = Math.round(parseInt(this.watermark.width) * this.zoom)
+      let clientWidth = document.documentElement.clientWidth
+      let px_width = width
+      if (this.w_unit === '%') {
+        px_width = Math.round(width / 100 * clientWidth)
+      }
+      clientWidth = clientWidth - 120
+      px_width = px_width > clientWidth ? clientWidth : (px_width < 600 ? 600 : px_width)
+      this.width = this.w_unit === '%' ? width : px_width
+      this.disableMax = px_width === clientWidth
+      this.disableMin = px_width === 600
       if (!this.watermark.defaultZoom) {
-        this.disableMin = this.width === this.watermark.width
+        this.disableMin = this.width === parseInt(this.watermark.width)
       }
     },
     onFullScreen (isFull) {
@@ -176,11 +190,11 @@ export default {
       let clientWidth = document.documentElement.clientWidth - 5
       let clientHeight = document.documentElement.clientHeight - 5
       if (this.isFullscreen) {
-        this.width = clientWidth + 'px'
-        this.height = clientHeight + 'px'
+        this.width = this.w_unit === '%' ? 100 : clientWidth
+        this.height = this.h_unit === '%' ? 100 : clientHeight
       } else {
-        this.width = this.watermark.width
-        this.height = this.watermark.height
+        this.width = parseInt(this.watermark.width)
+        this.height = parseInt(this.watermark.height)
       }
     },
     onLoadMore () {
@@ -239,6 +253,7 @@ export default {
   list-style-type: none;
   text-align: center;
   display: block;
+  position: relative;
 }
 .svgImage img {
   width: 100%;

@@ -11,9 +11,9 @@ export default {
     return {
       viewers: {
         txt: '杨万里yangwangli', // 水印文字
-        // defaultZoom: true,
-        // width: '700px',
-        // height: '500px',
+        defaultZoom: false,
+        width: '60%',
+        height: '80%',
         files: [
           require('./assets/1.svg'),
           require('./assets/2.svg'),
