@@ -1,3 +1,10 @@
+/*
+ * @Description: webpack配置文件
+ * @Date: 2019-01-03 15:37:15
+ * @Author: 肖立君
+ * @LastEditTime: 2019-07-22 14:17:42
+ * @LastEditors: 肖立君
+ */
 var path = require('path')
 var webpack = require('webpack')
 

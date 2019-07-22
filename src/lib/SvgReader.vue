@@ -1,22 +1,41 @@
+<!--
+ * @Description: SvgReader组件
+ * @Date: 2019-01-03 15:37:15
+ * @Author: 肖立君
+ * @LastEditTime: 2019-07-22 14:05:29
+ * @LastEditors: 肖立君
+ -->
 <template>
   <div :class="SvgReaderClass" :style="viewerStyle" ref="SvgReader">
     <div class="header">
-      <button v-if="isFullscreen" class="btn" @click="onFullScreen(false)" title="恢复窗口">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-quxiaoquanping"></use>
-        </svg>
-      </button>
-      <button v-else class="btn" @click="onFullScreen(true)" title="全屏显示">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-quanping"></use>
-        </svg>
-      </button>
-      <button class="btn" :style="maxStyle" @click="onZoom(true)" title="放大" :disabled="disableMax">
+      <div v-if="watermark.showFullscreen">
+        <button v-if="isFullscreen" type="button" class="btn" @click="onFullScreen(false)" title="恢复窗口">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-quxiaoquanping"></use>
+          </svg>
+        </button>
+        <button v-else class="btn" type="button" @click="onFullScreen(true)" title="全屏显示">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-quanping"></use>
+          </svg>
+        </button>
+      </div>
+      <button
+        v-if="watermark.showZoom"
+        type="button"
+        class="btn"
+        :style="maxStyle"
+        @click="onZoom(true)"
+        title="放大"
+        :disabled="disableMax"
+      >
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-fangda"></use>
         </svg>
       </button>
       <button
+        v-if="watermark.showZoom"
+        type="button"
         class="btn"
         :style="minStyle"
         @click="onZoom(false)"
@@ -31,11 +50,11 @@
     </div>
     <div class="body" :style="bodyStyle">
       <ul class="svgImage">
-        <li v-for="(item,index) of viewerFiles" :key="index">
-          <img :src="item" type="image/svg+xml">
+        <li v-for="(item, index) of viewerFiles" :key="index">
+          <img :style="SvgImageStyle" :src="item" type="image/svg+xml" />
         </li>
         <li>
-          <button v-if="showLoadMore" class="btn loadmore" @click="onLoadMore()">
+          <button v-if="showLoadMore" type="button" class="btn loadmore" @click="onLoadMore()">
             浏览更多
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-xiangxia"></use>
@@ -60,6 +79,9 @@ export default {
           txt: '水印文字',
           width: '860px',
           height: '700px',
+          showFullscreen: true, // 是否显示全屏按钮
+          showZoom: true, // 是否显示放大缩小按钮
+          innerZoom: false, // 是否进行内部缩放
           defaultZoom: false, // 默认不可以缩小
           defaultLoadPage: 3, // 默认加载页数
           nextloadPage: 3, // 继续浏览加载页数
@@ -79,29 +101,29 @@ export default {
       disableMax: false,
       disableMin: true,
       w_unit: '',
-      h_unit: ''
+      h_unit: '',
+      clientHeight: 0,
+      imageWidth: 0,
     }
   },
   created () {
+    this.clientHeight = document.documentElement.clientHeight
     this.w_unit = this.watermark.width.match(/(px|%)$/ig)[0] || 'px'
     this.h_unit = this.watermark.height.match(/(px|%)$/ig)[0] || 'px'
     this.width = parseInt(this.watermark.width)
     this.height = parseInt(this.watermark.height)
+    this.imageWidth = parseInt(this.watermark.width)
     this.LoadPage = this.watermark.defaultLoadPage
-    this.disableMin = !this.watermark.defaultZoom
-    console.log(this.disableMin)
+    this.disableMin = this.viewers.defaultZoom !== undefined ? !this.viewers.defaultZoom : false,
+      window.onresize = () => {
+        this.clientHeight = document.documentElement.clientHeight
+      }
   },
   mounted () {
     const txt = this.watermark.txt
     gwm.creation({
-      txt: txt,
-      mode: 'svg',
-      watch: true,
-      fontSize: 18,
-      color: '#000',
-      font: 'sans-serif',
-      alpha: 0.1,
-      angle: -15,
+      txt: txt, mode: 'svg', watch: true, fontSize: 18,
+      color: '#000', font: 'sans-serif', alpha: 0.1, angle: -15,
       container: '.SvgReader .svgImage'
     })
     const svgbody = window.document.querySelector('.SvgReader .body')
@@ -111,6 +133,9 @@ export default {
   computed: {
     SvgReaderClass () {
       return this.isFullscreen ? 'SvgReader FullScreen' : 'SvgReader'
+    },
+    SvgImageStyle () {
+      return this.watermark.innerZoom ? 'width:' + this.imageWidth + this.w_unit : ''
     },
     pageContent () {
       return this.currentPage + ' / ' + this.watermark.files.length
@@ -122,8 +147,8 @@ export default {
       return 'width:' + this.width + this.w_unit
     },
     bodyStyle () {
-      let clientHeight = document.documentElement.clientHeight
-      let mainHeight = this.h_unit === '%' ? Math.round(this.height / 100 * clientHeight) : parseInt(this.height)
+      const clientHeight = this.clientHeight
+      const mainHeight = this.h_unit === '%' ? this.height / 100 * clientHeight : parseFloat(this.height)
       return 'height:' + (mainHeight - 50) + 'px'
     },
     maxStyle () {
@@ -137,10 +162,13 @@ export default {
     },
     watermark () {
       return {
-        txt: this.viewers.txt || '水印文字',
+        txt: this.viewers.txt || '',
         width: this.viewers.width || '860px',
         height: this.viewers.height || '700px',
-        defaultZoom: this.viewers.defaultZoom,
+        showFullscreen: this.viewers.showFullscreen !== undefined ? this.viewers.showFullscreen : true,
+        showZoom: this.viewers.showZoom !== undefined ? this.viewers.showZoom : true,
+        innerZoom: this.viewers.innerZoom !== undefined ? this.viewers.innerZoom : false,
+        defaultZoom: this.viewers.defaultZoom !== undefined ? this.viewers.defaultZoom : true,
         defaultLoadPage: this.viewers.defaultLoadPage || 3,
         nextloadPage: this.viewers.nextloadPage || 3,
         files: this.viewers.files || []
@@ -152,24 +180,36 @@ export default {
   },
   methods: {
     onZoom (isBig) {
-      if (isBig) {
-        this.zoom += 0.2
-      } else {
-        this.zoom -= 0.2
-      }
-      let width = Math.round(parseInt(this.watermark.width) * this.zoom)
-      let clientWidth = document.documentElement.clientWidth
-      let px_width = width
+      this.zoom += isBig ? 0.2 : -0.2
+      const parent = this.$refs.SvgReader.parentElement
+      const parentStyle = document.defaultView.getComputedStyle(parent, null)
+      // 父元素的尺寸
+      let parentWidth = parseFloat(parentStyle.getPropertyValue('width'))
+      // 默认像素的原始尺寸
+      let originalSize = parseFloat(this.watermark.width)
+      // 缩放后的像素尺寸
+      let zoomWidth = originalSize * this.zoom
+      // 百分比对应的像素尺寸
+      let px_width = zoomWidth
       if (this.w_unit === '%') {
-        px_width = Math.round(width / 100 * clientWidth)
+        // 百分比对应的默认像素尺寸
+        originalSize = Math.round(originalSize / 100 * parentWidth)
+        px_width = Math.round(originalSize * this.zoom)
+        // 如果小于
+        px_width = px_width < 600 ? 600 : px_width
+        zoomWidth = px_width / parentWidth * 100
       }
-      clientWidth = clientWidth - 120
-      px_width = px_width > clientWidth ? clientWidth : (px_width < 600 ? 600 : px_width)
-      this.width = this.w_unit === '%' ? width : px_width
-      this.disableMax = px_width === clientWidth
-      this.disableMin = px_width === 600
+      if (this.watermark.innerZoom) {
+        this.imageWidth = zoomWidth
+      } else {
+        px_width = px_width < 600 ? 600 : px_width
+        px_width = px_width > parentWidth ? parentWidth : px_width
+        this.width = this.w_unit === '%' ? (px_width >= parentWidth ? 100 : zoomWidth) : px_width
+        this.disableMax = px_width === parentWidth
+      }
+      this.disableMin = px_width <= 600
       if (!this.watermark.defaultZoom) {
-        this.disableMin = this.width === parseInt(this.watermark.width)
+        this.disableMin = Math.round(this.width) === parseInt(this.watermark.width)
       }
     },
     onFullScreen (isFull) {
@@ -211,7 +251,7 @@ export default {
   background-color: white;
 }
 .SvgReader.FullScreen {
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   right: 0;
@@ -244,7 +284,7 @@ export default {
 .body {
   border-top: 1px solid #cccccc;
   overflow-y: auto;
-  overflow-x: hidden;
+  // overflow-x: hidden;
 }
 .svgImage,
 .svgImage li {

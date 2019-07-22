@@ -1,38 +1,52 @@
+<!--
+ * @Description: 说明文档
+ * @Date: 2019-01-03 15:10:48
+ * @Author: 肖立君
+ * @LastEditTime: 2019-07-22 10:40:51
+ * @LastEditors: 肖立君
+ -->
+
 # vue-svgreader
 
-[![NPM version](https://img.shields.io/npm/v/vue-svgreader.svg?style=flat)](https://www.npmjs.com/package/vue-svgreader) [![NPM downloads](https://img.shields.io/npm/dm/vue-svgreader.svg)](https://www.npmjs.com/package/vue-svgreader) [![MIT](https://img.shields.io/npm/l/vue-svgreader.svg)](https://www.npmjs.com/package/vue-svgreader) [![Git Size](https://img.shields.io/github/languages/code-size/flywin8/vue-svgreader.svg?maxAge=2592000)](https://github.com/flywin8/vue-svgreader) 
+[![NPM version](https://img.shields.io/npm/v/vue-svgreader.svg?style=flat)](https://www.npmjs.com/package/vue-svgreader) [![NPM downloads](https://img.shields.io/npm/dm/vue-svgreader.svg)](https://www.npmjs.com/package/vue-svgreader) [![MIT](https://img.shields.io/npm/l/vue-svgreader.svg)](https://www.npmjs.com/package/vue-svgreader) [![Git Size](https://img.shields.io/github/languages/code-size/flywin8/vue-svgreader.svg?maxAge=2592000)](https://github.com/flywin8/vue-svgreader)
 
-> 这是一个基于VUE的SVG文件阅读器插件，实现自定义水印、自定义尺寸、放大、缩小、滚动、翻页、全屏等功能
+> 这是一个基于 VUE 的 SVG 文件阅读器插件，实现自定义水印、自定义尺寸、放大、缩小、滚动、翻页、全屏等功能
 
 ##有问题反馈
 在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流
 
-* 德通电气
-* 邮件：(flywin#vip.qq.com, 把#换成@)
-* QQ: 2229390
-* github: [vue-svgreader](https://github.com/flywin8/vue-svgreader).
+- 德通电气
+- 邮件：(flywin#vip.qq.com, 把#换成@)
+- QQ: 2229390
+- github: [vue-svgreader](https://github.com/flywin8/vue-svgreader).
 
 ## 使用说明
 
 ### 安装组件
+
 ```javascript
 npm install vue-svgreader
 ```
+
 [![vue-svgreader](https://nodei.co/npm/vue-svgreader.png)](https://www.npmjs.com/package/vue-svgreader)
 
 ### 在组件中使用
+
 ```javascript
 import SvgReader from 'vue-svgreader'
 export default {
   components: {
     SvgReader
   },
-  data () {
+  data() {
     return {
       viewers: {
         txt: '水印文字',
         width: '700px', // 阅读器宽度默认860px(支持百分比)
         height: '500px', // 阅读器高度默认700px(支持百分比)
+        showFullscreen: true, // 是否显示全屏按钮
+        showZoom: true, // 是否显示放大缩小按钮
+        innerZoom: false, // 是否进行内部缩放
         defaultZoom: false, // 默认不可以缩小(false表示默认可以缩小)
         defaultLoadPage: 3, // 默认加载中页数是3
         nextloadPage: 3, // 每次点击继续浏览加载页数是3
@@ -49,12 +63,14 @@ export default {
 ```
 
 ### 全局注册组件
+
 ```javascript
 import SvgReader from 'vue-svgreader'
 Vue.use(SvgReader)
 ```
 
 ### 在组件中使用
+
 ```html
 <template>
   <div id="app">
